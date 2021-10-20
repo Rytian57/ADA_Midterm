@@ -4,7 +4,7 @@ author: "Ruiyi Tian"
 date: "9/7/2021"
 output: html_document
 ---
-
+#### !!!!!! MIDTERM QUESTION 4 IS ADDED AT THE END OF THIS DOCUMENT !!!!!!
 
 ```{r}
 library(foreign) #for reading spss (read.spss()), stata (read.dta()) and xpt (read.xport()) files
@@ -105,5 +105,23 @@ addmargins(bseason_table)
 # Question: How many percentage of the class are hummingbirds?
 type_table <- table(C1survey$animal)
 # 9 out of 28 students are hummingbirds, that is 32 percent of the class is neither a morning person nor a night person.
+
+```
+
+## Question 4
+```{r}
+# Reading the csv File
+library(readr)
+# Importing the BRFSS csv File
+BRFSS <-
+ read_csv(
+    "https://raw.githubusercontent.com/kijohnson/ADA-Fall-2021/master/BRFSS2017_10percent_v.csv"
+  )
+
+# Mean heights for both sexes
+# Male mean height = 1.781511 meters
+mean(BRFSS[BRFSS$SEX == 1,]$ht_meters, na.rm=TRUE)
+# Female mean height = 1.631513 meters
+mean(BRFSS[BRFSS$SEX == 2,]$ht_meters, na.rm=TRUE)
 
 ```
