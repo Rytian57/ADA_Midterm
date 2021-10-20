@@ -1,0 +1,109 @@
+---
+title: "HW2"
+author: "Ruiyi Tian"
+date: "9/7/2021"
+output: html_document
+---
+
+
+```{r}
+library(foreign) #for reading spss (read.spss()), stata (read.dta()) and xpt (read.xport()) files
+library(haven) #for reading SPSS (read_sav()), stata (read_dta()), SAS(read_sas()) and xpt (read_xpt()) files
+library(readr) #for reading csv file (read_csv())
+library(tidyverse)
+```
+
+####HW2: Class One Survey Analysis
+
+##INSTRUCTIONS
+
+Please complete tasks 1-7 using reproducible coding practices. Use R syntax to solve all problems (i.e. do not manually change values/variables in datasets or check them manually to make sure things are correct except as a double or triple check). Please cut and paste each problem before each R markdown chunk and annotate your code within the chunks.
+
+1. Import class one survey data from our Github site (https://github.com/kijohnson/ADA-Fall-2021) (The dataset called ‘Class 1 Survey Fall 2021.csv’ is located in the class one folder), calling the R dataframe that you create C1survey.
+## read in csv file
+```{r}
+C1survey <-
+ read_csv(
+    "https://raw.githubusercontent.com/kijohnson/ADA-Fall-2021/master/Class%201%20Survey%20Fall%202021.csv"
+  )
+```
+
+
+2. Determine: a. the number of observations (i.e. the number of people who filled out the survey) and b. the number of variables in the dataframe.
+```{r}
+dim(C1survey)
+# a. 28 observations
+# b. 27 variables
+```
+
+3. a. Rename the column variables to something shorter and that is descriptive of what the variable is about (for example like_dogs for the ‘Do you like dogs?’ question variable) and b. Display that they are renamed.
+```{r}
+# Change col names
+names(C1survey)[1:27] <- c("ID", "like_cats", "like_dogs", "item", "slogan", "day", "animal", "food", "drink", "season", "Month", "hobby", "degree", "specialization", "statistical_software", "r_experience", "coding_comf", "coding_len", "things_learn", "interest", "number", "bday", "bmonth", "country", "state", "city", "education")
+
+# Display names
+colnames(C1survey)
+```
+
+4. Write code to determine and display the number of factor, integer, numerical, and character variables there are in the C1survey dataset.
+```{r}
+str(C1survey)
+# 4 numerical
+# 23 character
+```
+
+5. a. Using code, check the bday and bmonth variables for any unusual or missing values. If you find any, b. describe what you will do with the unusual values in a comment before or immediately following the code that does it, and c. after you have cleaned up any unusual values, find the median bday and month. *Note: please make sure that your bday and month variables are numeric before doing statistics
+```{r}
+# a.
+# Check bday & bmonth
+C1survey$bday
+C1survey$bmonth
+
+# b.
+# Change unusual bday value (character to integer)
+C1survey$bday[22] <- 28
+# Double Check bday
+C1survey$bday
+
+# Change unusual bday value (character to integer)
+C1survey$bmonth[21] <- 5
+C1survey$bmonth[26] <- 1
+# Double Check bmonth
+C1survey$bmonth
+
+# c.
+C1survey$bday <- as.integer(C1survey$bday)
+C1survey$bmonth <- as.integer(C1survey$bmonth)
+# Median bday = 17
+median(C1survey$bday)
+# Median bmonth = 6.5
+median(C1survey$bmonth)
+```
+
+6. a. Create a new variable called bseason that gives the season according to Northern Meteorological season in which respondents were born (winter=12/1 to 2/29, spring=3/1 to 5/31, summer=6/1 to 8/31, fall=9/1 to 11/30). b. Using the table function, print a table of Seasons in the columns and bmonths in the rows that allows you to check that the coding is correct c. Sum the columns using the addmargins function to answer the question of how many classmates were born in each season? Include your answer in the code you turn in.
+```{r}
+# a.
+C1survey <- C1survey %>%
+  mutate(bseason = case_when(
+    bmonth >= 12 | bmonth <=2 ~ "winter",
+    bmonth >= 3 & bmonth <=5 ~ "spring",
+    bmonth >= 6 & bmonth <=8 ~ "summer",
+    bmonth >= 9 & bmonth <=11 ~ "fall"
+  ))
+
+# b.
+bseason_table <- table(C1survey$bmonth, C1survey$bseason)
+bseason_table
+
+# c.
+addmargins(bseason_table)
+# There are 5 classmates born in the spring, 6 born in the summer, 10 born in the fall, and 7 born in the winter. 
+```
+
+7. Pick your favorite variable to analyze, come up with a question you want to answer with that variable, generate the code, and provide an answer to your question. Describe what you did using comments (i.e. #’s).
+```{r}
+# Question: How many percentage of the class are hummingbirds?
+type_table <- table(C1survey$animal)
+# 9 out of 28 students are hummingbirds, that is 32 percent of the class is neither a morning person nor a night person.
+
+```
